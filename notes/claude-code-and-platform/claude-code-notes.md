@@ -11,7 +11,7 @@ What separates it from Claude.ai is direct access. Claude.ai means copying and p
 
 The four things it can do: read and understand your codebase (explain a feature, trace a bug); edit files across your project (refactor once, every reference updated); run terminal commands (build, test, install, then use the output to decide what's next); search the web (documentation, latest API references).
 
-**The code:** from the course terminal screenshot, the entire onboarding is two lines:
+**The code:** the entire onboarding is two lines:
 ```bash
 cd ~/sample-project
 claude
@@ -38,9 +38,9 @@ A single API call gets one response. To automate a workflow, Claude needs to act
 
 Five beats: send a message with tools available; Claude answers with a final answer or a tool request; your code runs the tool; the result goes back; repeat until stop_reason is end_turn.
 
-Four pieces: the tools array (menu of allowed errands: name, description, JSON input schema); run_tool (the legwork, hardcoded in the demo, real APIs in production); messages (the shared notepad, every turn appended); the two stop reasons (tool_use means "I need to check something first," end_turn means "done").
+Four pieces: the tools array (menu of allowed errands: name, description, JSON input schema); run_tool (the legwork, stubbed in the teaching example, real APIs in production); messages (the shared notepad, every turn appended); the two stop reasons (tool_use means "I need to check something first," end_turn means "done").
 
-Demo: get_weather for Austin. Turn one: tool_use, code returns "95F, sunny." Turn two: end_turn, wear something light. Production is the same shape with real tools: a compliance agent reading reports, looking up building codes, writing findings to a database, dozens of rounds.
+Example: get_weather for Austin. Turn one: tool_use, code returns "95F, sunny." Turn two: end_turn, wear something light. Production is the same shape with real tools: a compliance agent reading reports, looking up building codes, writing findings to a database, dozens of rounds.
 
 Keep these: "An agent is Claude in a loop: observe, decide, act, repeat." And "You own the loop and the tools. Claude owns the reasoning." The 3D/2D read: the loop and legwork are 2D machinery (yours or your developers'); the reasoning is directed from 3D. You set the boundaries (allowed errands, a safety cap on rounds); within them she decides how many errands each task needs. Managed agents are Anthropic running the same loop on their computers.
 
@@ -50,7 +50,7 @@ Keep these: "An agent is Claude in a loop: observe, decide, act, repeat." And "Y
 
 Tools give Claude access to your external data and actions. A tool is a function you define and expose; Claude decides when to call it. She never executes it: she requests, your code runs it, the result goes back.
 
-A tool definition is a menu card with three lines: name, description (what she reads to decide), input schema (the order form). The shape, using the course's Denver weather demo as the example:
+A tool definition is a menu card with three lines: name, description (what she reads to decide), input schema (the order form). The shape of every tool definition, using a weather lookup as the example:
 ```json
 {
   "name": "get_weather",
@@ -61,7 +61,7 @@ A tool definition is a menu card with three lines: name, description (what she r
   }
 }
 ```
-In plain words: the first line is the tool's name, what Claude calls it. The second line is the description, the only thing Claude reads when deciding whether this tool fits your request, which is why vague descriptions are the top reason agents misfire. The rest is the order form: what information the tool needs before it can run (here, a city name). In the Denver demo, sharp descriptions ("today's current weather" versus "forecast for the next few days") let her pick the right card, sometimes both in the same turn. Vague menu, confused assistant; sharp menu, sharp decisions. Writing sharp descriptions is the highest-leverage work here.
+In plain words: the first line is the tool's name, what Claude calls it. The second line is the description, the only thing Claude reads when deciding whether this tool fits your request, which is why vague descriptions are the top reason agents misfire. The rest is the order form: what information the tool needs before it can run (in this case, a city name). In the weather example, sharp descriptions ("today's current weather" versus "forecast for the next few days") let her pick the right card, sometimes both in the same turn. Vague menu, confused assistant; sharp menu, sharp decisions. Writing sharp descriptions is the highest-leverage work here.
 
 Handshake: stop_reason "tool_use" is her raised hand; your code runs the function; the result returns as a tool_result stapled with the tool_use_id receipt. Multiple tools change nothing about the loop: add cards, add a dispatch case. The SDK tool runner (TypeScript, Python, Ruby) removes the boilerplate: plain functions in, schemas built from names/types/docs, the whole loop handled internally, final answer out through untilDone(). Real tools wrap code you already own. The spectrum: run the loop yourself, use the runner, or rent managed agents. Same loop, three levels of ownership.
 
@@ -69,7 +69,7 @@ Handshake: stop_reason "tool_use" is her raised hand; your code runs the functio
 
 Three modes, a ladder of trust you climb deliberately. **Default:** Claude asks for explicit permission before editing a file or running a shell command. **Auto-accept:** files are edited without asking, commands still require approval. Writing is safe to automate; running things is not. **Plan mode:** read-only tools compile a plan of action first; you review it, then it executes.
 
-The approval moment, from the course screenshot: asked for a simple Express API in TypeScript, Claude reads one file, sees an empty project, proposes `npm init -y`, in plain words "create a new Node.js project file, accepting every default answer without asking me," and before running it shows the command, a plain-words description ("Initialize npm project"), and "This command requires approval. Do you want to proceed?" Options: 1. Yes. 2. Yes, and don't ask again for `npm init:*` (standing approval for that command pattern). 3. No. Footer: Esc to cancel, Tab to amend, ctrl+e to explain.
+The approval moment looks like this: you ask for a simple Express API in TypeScript, Claude reads one file, sees an empty project, proposes `npm init -y`, in plain words "create a new Node.js project file, accepting every default answer without asking me," and before running it shows the command, a plain-words description ("Initialize npm project"), and "This command requires approval. Do you want to proceed?" Options: 1. Yes. 2. Yes, and don't ask again for `npm init:*` (standing approval for that command pattern). 3. No. Footer: Esc to cancel, Tab to amend, ctrl+e to explain.
 
 All configurable in the settings file. The caution: be careful skipping permissions, because free rein to run commands means a mistake gets harder to catch before it happens. This is the diligence beat for the agent era, and the product-level answer to "stay in the loop."
 
@@ -85,13 +85,13 @@ All configurable in the settings file. The caution: be careful skipping permissi
 
 Four tips: define success criteria in the plan (Claude needs to know what "correct" looks like); add tools that remove back-and-forth (Claude in Chrome, 3M users, beta, paid: drives a browser tab, tests UIs directly); bring a test suite Claude can validate against continuously (it can write the tests; make sure they're trustworthy); feed CLAUDE.md (recurring problem gets saved there so the next session starts smarter).
 
-Worth remembering from the screenshots: the WebP plan's six-step verification checklist (install sharp; uploads convert to .webp; avatar_url ends .webp; served as image/webp; re-upload deletes the old file; corrupt upload → 422, no orphans) and its approval options (yes + clear context and auto-accept, yes + auto-accept, yes + manual approval, or a typed question). Plans save to ~/.claude/plans/ and open in VS Code with ctrl-g. The reviewer run: "spawn the code reviewer subagent" → lists TypeScript files, reads the changed ones, 17+ tool calls, reports "32s · ↓ 799 tokens"; ctrl+b backgrounds it.
+A concrete example of a good plan: a WebP image-conversion plan carrying a six-step verification checklist (install sharp; uploads convert to .webp; avatar_url ends .webp; served as image/webp; re-upload deletes the old file; corrupt upload → 422, no orphans) and offering approval options (yes + clear context and auto-accept, yes + auto-accept, yes + manual approval, or a typed question). Plans save to ~/.claude/plans/ and open in VS Code with ctrl-g. A reviewer run looks like this: you ask for the code reviewer subagent, it lists the project's TypeScript files, reads the changed ones, and reports back its findings with the time and token cost; ctrl+b backgrounds it while it works.
 
 ## 5. Context management
 
 Context is Claude's working memory: every file read, command run, and message sent takes space, and the space is finite. When the window fills, Claude Code compacts on its own: summarizes the important details, drops unnecessary tool-call results. Honest footnote: compaction can lose details. The compact summary it leaves behind has a shape worth copying: Primary Request and Intent, Key Technical Concepts, Files and Code Sections.
 
-Three commands: `/compact` clears history but keeps a summary (use mid-feature when hitting the limit); `/clear` wipes everything for a fresh start (use when starting a new feature, so the old conversation can't bias the new one); `/context` shows the window's state (size, hungriest categories, free space, autocompact buffer, visual breakdown). From the screenshot: 64k/200k tokens, and system tools (14.6k) cost more than the actual messages (1.3k).
+Three commands: `/compact` clears history but keeps a summary (use mid-feature when hitting the limit); `/clear` wipes everything for a fresh start (use when starting a new feature, so the old conversation can't bias the new one); `/context` shows the window's state (size, hungriest categories, free space, autocompact buffer, visual breakdown). For a sense of scale, one real session showed 64k of 200k tokens used, with system tools (14.6k) costing more than the actual messages (1.3k).
 
 Three space-saving tips: be specific (vague prompts look smaller but cost more, because unguided exploration and reasoning burn more context than a detailed prompt); manage MCP servers (they load all their tools into context by default, even unused ones; turn off unrelated servers; Skills don't load everything upfront); use subagents (separate context window, parallel; hand back just the summary for answer-only tasks).
 
@@ -111,7 +111,7 @@ Three built-in features that remove friction from the daily git flow:
 
 One of the most useful features in the product. Without it, every session starts blank: Claude re-explores the codebase, re-derives dependencies, re-learns what's built, and makes steering-harder assumptions along the way. CLAUDE.md is a Markdown file in the project root, read automatically every session, appended to your prompt. An onboarding script for your codebase.
 
-The shape, verbatim from the course example:
+The shape of a good one:
 ```markdown
 # Project
 
@@ -146,9 +146,9 @@ Creating your own: subagents are Markdown files with YAML frontmatter (a setting
 
 An open standard connecting Claude Code to external tools and data sources; Claude decides on its own when to reach for them. The gap it bridges: your context lives outside the codebase, in databases, productivity apps, public repos.
 
-The "tools" concept: tools let agents act, not just answer. Two demo-grade examples: the Linear server (user: "make a plan off of the linear ticket MEN-12" → `get_issue(id: "MEN-12", includeRelations: true)`, described as "Retrieve detailed information about an issue by ID, including attachments and git branch name"; every tool's plain-language description is how Claude decides when to use it) and the Context7 docs server (checking a shadcn/ui implementation against the newest standards: `resolve-library-id` matches the library, then local package.json gets compared).
+The "tools" concept: tools let agents act, not just answer. Two examples that show it working: the Linear server (you ask: "make a plan off of the linear ticket MEN-12" → `get_issue(id: "MEN-12", includeRelations: true)`, described as "Retrieve detailed information about an issue by ID, including attachments and git branch name"; every tool's plain-language description is how Claude decides when to use it) and the Context7 docs server (checking a shadcn/ui implementation against the newest standards: `resolve-library-id` matches the library, then the local package.json gets compared).
 
-Adding servers with `claude mcp add`: HTTP for remote services (`claude mcp add --transport http linear-server https://mcp.linear.app/mcp`, "register a server named linear-server reaching Linear's hosted endpoint over the network"); stdio for local processes (`claude mcp add --transport stdio dev-utils -- python C:/Users/lewis/mcp-server/server.py`, "register a local server Claude starts by running this Python script, talking over standard input/output"). Manage with `/mcp`: status, tool list, reconnect, disable; the detail view shows the start command, config location (here `.claude.json` scoped to the project), and tool count.
+Adding servers with `claude mcp add`: HTTP for remote services (`claude mcp add --transport http linear-server https://mcp.linear.app/mcp`, "register a server named linear-server reaching Linear's hosted endpoint over the network"); stdio for local processes (`claude mcp add --transport stdio dev-utils -- python ./mcp-server/server.py`, "register a local server Claude starts by running this Python script, talking over standard input/output"). Manage with `/mcp`: status, tool list, reconnect, disable; the detail view shows the start command, config location, and tool count.
 
 Scoping: Local (this project, just you), User (all your projects), Project (`.mcp.json` in version control, the whole team gets identical servers).
 
@@ -164,7 +164,7 @@ The canonical example: PostToolUse with matcher `"Edit|MultiEdit|Write"` auto-fo
 
 Blocking with PreToolUse: the hook gets tool name + input as JSON on stdin; exit code decides. 0: proceed. 2: block, and stderr feeds back to Claude as feedback so it adjusts. Anything else: non-blocking error shown to you. Hard rules, guaranteed: block writes to prod config, block `rm -rf`, block commits to main.
 
-The screenshot's config, as written in `.claude/settings.json`:
+A working config, as written in `.claude/settings.json`:
 ```json
 {
   "hooks": {
@@ -188,5 +188,5 @@ The screenshot's config, as written in `.claude/settings.json`:
   }
 }
 ```
-In plain words, line by line: the outer `"hooks"` opens the hooks section. `"PreToolUse"` says "run this before a tool call." `"matcher": "Bash"` narrows it to Bash tool calls only. The inner `"command"` is what runs: take the project root (`$CLAUDE_PROJECT_DIR`, an environment variable holding the project's folder, so the path works no matter where Claude's current directory is), go into `.claude/hooks/`, and execute `block-dangerous-commands.sh`, a script whose whole job is judging whether the command is dangerous. Then `"PostToolUse"` with matcher `"Edit|Write"` catches every file modification after it happens (the rest of that entry, cut off in the screenshot, points at the formatter). `.claude/settings.json` is project-level: check it in, the team gets identical hooks.
+In plain words, line by line: the outer `"hooks"` opens the hooks section. `"PreToolUse"` says "run this before a tool call." `"matcher": "Bash"` narrows it to Bash tool calls only. The inner `"command"` is what runs: take the project root (`$CLAUDE_PROJECT_DIR`, an environment variable holding the project's folder, so the path works no matter where Claude's current directory is), go into `.claude/hooks/`, and execute `block-dangerous-commands.sh`, a script whose whole job is judging whether the command is dangerous. Then `"PostToolUse"` with matcher `"Edit|Write"` catches every file modification after it happens (the rest of that entry points at the formatter). `.claude/settings.json` is project-level: check it in, the team gets identical hooks.
 
