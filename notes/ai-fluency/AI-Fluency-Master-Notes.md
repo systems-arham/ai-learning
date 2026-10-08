@@ -331,11 +331,10 @@ Pick one real thing and apply the 4Ds to it:
 
 # Part 4: Reference
 
-## Vocabulary (one-line definitions)
+## Vocabulary
 
 **AI Fluency** — working with AI in ways that are effective, efficient, ethical, and safe. **The 4Ds** — delegation, description, discernment, diligence. **Automation** — human defines, AI executes. **Augmentation** — thinking partners, back-and-forth. **Agency** — AI configured to act independently on your behalf. **Generative AI** — creates new content rather than analyzing existing data. **LLM** — generative AI trained on vast text. **Parameters** — the values inside a model; modern LLMs have billions. **Neural networks** — layered nodes learning patterns from training. **Transformer** — the 2017 architecture processing text in parallel with attention. **Scaling laws** — more size, data, and compute bring consistent gains, sometimes emergent capabilities. **Pre-training** — learning patterns from vast text. **Fine-tuning** — learning to follow instructions and be helpful, honest, harmless. **Context window** — what the AI can attend to at once; fixed size. **Hallucination** — plausible but incorrect, stated confidently. **Knowledge cutoff** — the date the model's world ended. **RAG** — connecting AI to external knowledge to cut hallucinations. **Bias** — systematic unfair patterns from training data. **Temperature** — randomness dial: boiling water vs ice crystals. **Reasoning models** — built to think step-by-step. **Prompt** — instructions plus shared documents. **Prompt engineering** — designing effective prompts. **Chain-of-thought** — step-by-step reasoning prompts. **Few-shot** — teaching by input-output examples. **Role/persona** — the character the AI adopts. **Output constraints** — format, length, structure specified. **Think-first** — reason before answering. **MCP** — USB-C for AI, the universal connector standard.
 
-Full glossary lives in `../lessons/ai-fluency/08-vocabulary-cheat-sheet.md`; use its definitions verbatim in scripts so terms stay consistent.
 
 ## Course roadmaps
 
